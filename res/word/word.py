@@ -1,4 +1,4 @@
-def jaccard(ng_used, x, cmp_w):
+def jaccard1(ng_used, x, cmp_w):
     ng_count = 0
     for i in cmp_w.n_grams:
         if i not in ng_used[cmp_w.word]:
@@ -11,12 +11,32 @@ def jaccard(ng_used, x, cmp_w):
     return jac
 
 
+def jaccard(cmp_w, x):
+    intersection = []
+    union = x.n_grams
+    for i in cmp_w.n_grams:
+        if i in x.n_grams and i not in intersection:
+            intersection.append(i)
+        if i not in union:
+            union.append(i)
+    jac = len(intersection) / len(union)
+    return jac
+
+
+def find_close_words(cmp_word, words_list, j):
+    j_dict = {}
+    for w in words_list:
+        jac = jaccard(cmp_word, w)
+        if jac >= j:
+            j_dict[w] = (w, jac)              # if the jaccard value is greater it stores the word and the j value
+    return j_dict
+
 def find_closest(ng_close_index, ng_used, word):
     closest_word = ""
     j_dict = {}
     best_j = 0
     for w in ng_close_index:
-        j = jaccard(ng_used, word, w)
+        j = jaccard1(ng_used, word, w)
         j_dict[w.word] = j
         if j > best_j:
             best_j = j
@@ -26,25 +46,28 @@ def find_closest(ng_close_index, ng_used, word):
 
 class NGramIndex:
     def __init__(self, word_to_cmp, words_list, j_val=0.5):
-        self.n_gram_index = {}              # this dictionary associate to every n-gram any word that contains it
-        self.n_gram_schedule = {}       # this dictionary associate to every word its n-grams
-        self.close_j_words = []
+        #self.n_gram_index = {}              # this dictionary associate to every n-gram-key any word that contains it
+        #self.n_gram_schedule = {}           # this dictionary associate to every word-key its n-grams
+        #self.close_j_words = []
+
+        self.close_words = []           # this word-key dict associate the word and the jaccard value to the word-key
         self.words_list = words_list
+        self.close_words = find_close_words(word_to_cmp, words_list, j_val)
 
-        for word in words_list:
-            self.n_gram_schedule[word] = word.n_grams
+        #for word in words_list:     # add to the words-key dict the n-grams of every word
+        #    self.n_gram_schedule[word] = word.n_grams
 
-        for w in self.n_gram_schedule:
-            for ng in self.n_gram_schedule[w]:
-                if ng in self.n_gram_index:
-                    self.n_gram_index[ng].append(w)
-                else:
-                    self.n_gram_index[ng] = []
-                    self.n_gram_index[ng].append(w)
-        self.closest_data = self.get_closest_word(word_to_cmp)    # ritorna dati parola più vicina e parole più vicine
-        self.closest_word = self.closest_data[0]
-        close_j_words = self.find_j_words(self.closest_data[5], j_val)
-        self.close_j_words = self.inorder_j_words(close_j_words)
+        #for w in self.n_gram_schedule:
+        #    for ng in self.n_gram_schedule[w]:
+        #        if ng in self.n_gram_index:         # add to the n-grams-key dict any word that contains it
+        #            self.n_gram_index[ng].append(w)
+        #        else:
+        #            self.n_gram_index[ng] = []
+        #            self.n_gram_index[ng].append(w)
+        #self.closest_data = self.get_closest_word(word_to_cmp)    # ritorna dati parola più vicina e parole più vicine
+        #self.closest_word = self.closest_data[0]
+        #close_j_words = self.find_j_words(self.closest_data[5], j_val)
+        #self.close_j_words = self.inorder_j_words(close_j_words)
 
     def inorder_j_words(self, wj_dict):
         close_words_list = []

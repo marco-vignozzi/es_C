@@ -4,27 +4,40 @@ from res.word import word
 
 
 class EditDistanceData:
+
     def __init__(self, query_word, words_list, d_value=3):
 
         self.rows = len(query_word.word)
-        self.compared_word = query_word
-        self.ed_schedule = {}
-        self.costs_list = {}
-        self.words_length = {}
+        self.compared_word = query_word     # word to compare with all the others
+        self.ed_schedule = {}           # word-compared-key dict with all the info about the edit-distance
+        self.costs_list = {}            # word-compared-key dict with the cost of the edit-distance
+        self.words_length = {}          # word-compared-key dict with the length of the word compared
+
         for w in words_list:
             self.ed_schedule[w.word] = self.get_ed_schedule(query_word.word, w.word)
-            self.costs_list[w.word] = self.ed_schedule[w.word][0]
-            self.words_length[w.word] = self.ed_schedule[w.word][2]
+            self.costs_list[w.word] = self.ed_schedule[w.word][1]
+            self.words_length[w.word] = self.ed_schedule[w.word][3]
         # crea un dizionario di parole di cui si è calcolato l'edit distance con la query_word, a cui associamo informazioni sull'editing
-        # è implementata con un dizionario di tuple: {word: (edit-cost, op-table, word-length)}
+        # è implementata con un dizionario di tuple: {word: (word, edit-cost, op-table, word-length)}
 
-        self.close_words = self.get_close_words(words_list, d_value)       # salvo le parole più vicine del valore dato (d_value)
         cost = math.inf
         self.closest_word = ()
-        for w in self.close_words:         # trovo la parola più vicina
-            if self.close_words[w] < cost:
-                cost = self.close_words[w]
-                self.closest_word = w, cost
+        for w in self.costs_list:         # trovo la parola più vicina
+            if self.costs_list[w] < cost:
+                cost = self.costs_list[w]
+                self.closest_word = ed_schedule[w]      # stores data of the closest word
+        self.closest_op_seq = list()       # stores the operations to convert the closest word to the query word
+        self.get_op_sequence(self.closest_op_seq, self.closest_word[2], self.rows, self.closest_word[3])
+
+        # self.close_words = self.get_close_words(words_list, d_value)       # salvo le parole più vicine del valore dato (d_value)
+        # cost = math.inf
+        # self.closest_word = ()
+        # for w in self.close_words:         # trovo la parola più vicina
+        #     if self.close_words[w] < cost:
+        #         cost = self.close_words[w]
+        #         self.closest_word = w, cost
+
+
 
     def get_ed_schedule(self, x_str, y_str):
         x_str = " " + x_str
@@ -60,8 +73,8 @@ class EditDistanceData:
                 if c[i, j - 1] + 1 < c[i, j]:
                     c[i, j] = c[i, j - 1] + 1
                     op[i, j] = f"insert {y_str[j]}"
-        bundled_word = (c[m - 1][n - 1], op, n - 1)
-        return bundled_word        # ritorna una tupla con costo di editing, tabella delle operazioni e lunghezza parola
+        bundled_word = (y_str, c[m - 1][n - 1], op, n - 1)
+        return bundled_word        # ritorna una tupla con parola confrontata, costo di editing, tabella delle operazioni e lunghezza parola
 
     def get_op_sequence(self, op_list, op_table, m, n):
         if m == 0 and n == 0:

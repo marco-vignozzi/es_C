@@ -1,17 +1,17 @@
-def jaccard1(ng_used, x, cmp_w):
-    ng_count = 0
-    for i in cmp_w.n_grams:
-        if i not in ng_used[cmp_w.word]:
-            ng_count += 1
-    for j in x.n_grams:
-        if j not in ng_used[cmp_w.word]:
-            ng_count += 1
-    ng_count += len(ng_used[cmp_w.word])
-    jac = len(ng_used[cmp_w.word]) / ng_count
-    return jac
+# def jaccard1(ng_used, x, cmp_w):
+#     ng_count = 0
+#     for i in cmp_w.n_grams:
+#         if i not in ng_used[cmp_w.word]:
+#             ng_count += 1
+#     for j in x.n_grams:
+#         if j not in ng_used[cmp_w.word]:
+#             ng_count += 1
+#     ng_count += len(ng_used[cmp_w.word])
+#     jac = len(ng_used[cmp_w.word]) / ng_count
+#     return jac
+#
 
-
-def jaccard(cmp_w, x):
+def jaccard(cmp_w, x):          # calculate the jaccard
     intersection = []
     union = x.n_grams
     for i in cmp_w.n_grams:
@@ -24,24 +24,24 @@ def jaccard(cmp_w, x):
 
 
 def find_close_words(cmp_word, words_list, j):
-    j_dict = {}
+    j_dict = {}                              # word-key dict which contains any word of the list with greater jaccard
     for w in words_list:
         jac = jaccard(cmp_word, w)
         if jac >= j:
             j_dict[w] = (w, jac)              # if the jaccard value is greater it stores the word and the j value
     return j_dict
-
-def find_closest(ng_close_index, ng_used, word):
-    closest_word = ""
-    j_dict = {}
-    best_j = 0
-    for w in ng_close_index:
-        j = jaccard1(ng_used, word, w)
-        j_dict[w.word] = j
-        if j > best_j:
-            best_j = j
-            closest_word = w
-    return closest_word.word, best_j, ng_used[closest_word.word], ng_close_index[closest_word], ng_close_index, j_dict
+#
+# def find_closest(ng_close_index, ng_used, word):
+#     closest_word = ""
+#     j_dict = {}
+#     best_j = 0
+#     for w in ng_close_index:
+#         j = jaccard1(ng_used, word, w)
+#         j_dict[w.word] = j
+#         if j > best_j:
+#             best_j = j
+#             closest_word = w
+#     return closest_word.word, best_j, ng_used[closest_word.word], ng_close_index[closest_word], ng_close_index, j_dict
 
 
 class NGramIndex:
@@ -69,45 +69,45 @@ class NGramIndex:
         #close_j_words = self.find_j_words(self.closest_data[5], j_val)
         #self.close_j_words = self.inorder_j_words(close_j_words)
 
-    def inorder_j_words(self, wj_dict):
-        close_words_list = []
-        while wj_dict:
-            best_j = 0
-            best_w = ""
-            for cmp_w in wj_dict:
-                if wj_dict[cmp_w] > best_j:
-                    best_w = cmp_w
-                    best_j = wj_dict[cmp_w]
-            close_words_list.append((best_w, best_j))
-            if best_w:
-                del wj_dict[best_w]
-            else:
-                return []
-        return close_words_list
-
-    def find_j_words(self, j_dict, j_val):    # crea lista di parole con j >= j_val
-        close_words = {}
-        for word in j_dict:
-            if j_dict[word] >= j_val:
-                close_words[word] = j_dict[word]
-        return close_words
-
-    def get_closest_word(self, word):
-        n_gram_close_index = {}
-        n_gram_used = {}
-        for ng in word.n_grams:
-            if ng in self.n_gram_index:
-                for w in self.n_gram_index[ng]:
-                    if w in n_gram_close_index and ng not in n_gram_used[w.word]:
-                        n_gram_close_index[w] += 1
-                        n_gram_used[w.word].append(ng)
-                    elif w.word not in n_gram_used:
-                        n_gram_close_index[w] = 0
-                        n_gram_close_index[w] += 1
-                        n_gram_used[w.word] = []
-                        n_gram_used[w.word].append(ng)
-        return find_closest(n_gram_close_index, n_gram_used, word)
-
+    # def inorder_j_words(self, wj_dict):
+    #     close_words_list = []
+    #     while wj_dict:
+    #         best_j = 0
+    #         best_w = ""
+    #         for cmp_w in wj_dict:
+    #             if wj_dict[cmp_w] > best_j:
+    #                 best_w = cmp_w
+    #                 best_j = wj_dict[cmp_w]
+    #         close_words_list.append((best_w, best_j))
+    #         if best_w:
+    #             del wj_dict[best_w]
+    #         else:
+    #             return []
+    #     return close_words_list
+    #
+    # def find_j_words(self, j_dict, j_val):    # crea lista di parole con j >= j_val
+    #     close_words = {}
+    #     for word in j_dict:
+    #         if j_dict[word] >= j_val:
+    #             close_words[word] = j_dict[word]
+    #     return close_words
+    #
+    # def get_closest_word(self, word):
+    #     n_gram_close_index = {}
+    #     n_gram_used = {}
+    #     for ng in word.n_grams:
+    #         if ng in self.n_gram_index:
+    #             for w in self.n_gram_index[ng]:
+    #                 if w in n_gram_close_index and ng not in n_gram_used[w.word]:
+    #                     n_gram_close_index[w] += 1
+    #                     n_gram_used[w.word].append(ng)
+    #                 elif w.word not in n_gram_used:
+    #                     n_gram_close_index[w] = 0
+    #                     n_gram_close_index[w] += 1
+    #                     n_gram_used[w.word] = []
+    #                     n_gram_used[w.word].append(ng)
+    #     return find_closest(n_gram_close_index, n_gram_used, word)
+    #
 
 class Word:
     def __init__(self, word, ng_dim=3):

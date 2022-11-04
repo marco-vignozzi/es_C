@@ -28,14 +28,15 @@ class Test:
 
         self.ng_creation_time = end - start
 
+        self.close_words = {}
         # this word-compared-key dict associates to any compared word the list of words in the vocabulary with greater
         # jaccard as a tuple (word, j)
-        self.close_words = {}
-        self.ng_finding_time = {}       # word-compared-key dict that stores the times needed for finding close words
-        # finding the words in the vocabulary with a greater jaccard value for each word compared
+        self.ng_finding_time = {}
+        # word-compared-key dict that stores the times needed for finding the words in the vocabulary with a greater
+        # jaccard value for each word compared
         for w in words_to_compare:
             start = timer()
-            self.close_words[w] = word.NGramIndex(w, self.words_list, j_val)
+            self.close_words[w] = word.NGramIndex(w, self.words_list, j_val).close_words
             end = timer()
             self.ng_finding_time[w] = end - start
 

@@ -5,7 +5,7 @@ from res.word import word
 
 class EditDistanceData:
 
-    def __init__(self, query_word, words_list, d_value=3):
+    def __init__(self, query_word, words_list):
 
         self.rows = len(query_word.word)
         self.compared_word = query_word     # word to compare with all the others
@@ -17,12 +17,12 @@ class EditDistanceData:
             self.ed_schedule[w.word] = self.get_ed_schedule(query_word.word, w.word)
             self.costs_list[w.word] = self.ed_schedule[w.word][1]
             self.words_length[w.word] = self.ed_schedule[w.word][3]
-        # crea un dizionario di parole di cui si è calcolato l'edit distance con la query_word, a cui associamo informazioni sull'editing
-        # è implementata con un dizionario di tuple: {word: (word, edit-cost, op-table, word-length)}
+        # any element in the ed_schedule dict contains a tuple with the following data about edit-distance:
+        # {word: (word, edit-cost, op-table, word-length)}
 
         cost = math.inf
         self.closest_word = ()
-        for w in self.costs_list:         # trovo la parola più vicina
+        for w in self.costs_list:         # search the closest word
             if self.costs_list[w] < cost:
                 cost = self.costs_list[w]
                 self.closest_word = ed_schedule[w]      # stores data of the closest word
@@ -74,7 +74,7 @@ class EditDistanceData:
                     c[i, j] = c[i, j - 1] + 1
                     op[i, j] = f"insert {y_str[j]}"
         bundled_word = (y_str, c[m - 1][n - 1], op, n - 1)
-        return bundled_word        # ritorna una tupla con parola confrontata, costo di editing, tabella delle operazioni e lunghezza parola
+        return bundled_word        # it returns a tuple with compared word, edit cost, operations table and word length
 
     def get_op_sequence(self, op_list, op_table, m, n):
         if m == 0 and n == 0:
@@ -97,20 +97,20 @@ class EditDistanceData:
     def create_op_list(self, op_list, operation):
         op_list.append(operation)
 
-    def op_scheduler(self, schedule):
-        op_schedule = []
-        for w in schedule:
-            op_list = []
-            self.get_op_sequence(op_list, schedule[w][1], self.rows, schedule[w][2])
-            op_schedule.append(tuple(op_list))
-        return op_schedule
-
-    def get_close_words(self, w_list, v):
-        close_words = {}
-        for w in w_list:
-            if self.costs_list[w.word] <= v:
-                close_words[w.word] = self.costs_list[w.word]
-        return close_words
+    # def op_scheduler(self, schedule):
+    #     op_schedule = []
+    #     for w in schedule:
+    #         op_list = []
+    #         self.get_op_sequence(op_list, schedule[w][1], self.rows, schedule[w][2])
+    #         op_schedule.append(tuple(op_list))
+    #     return op_schedule
+    #
+    # def get_close_words(self, w_list, v):
+    #     close_words = {}
+    #     for w in w_list:
+    #         if self.costs_list[w.word] <= v:
+    #             close_words[w.word] = self.costs_list[w.word]
+    #     return close_words
 
 
 

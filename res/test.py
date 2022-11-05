@@ -30,15 +30,20 @@ class Test:
         self.close_words = {}
         # this word-compared-key dict associates to any compared word the list of words in the vocabulary with greater
         # jaccard as a tuple (word, j)
+        self.ordered_j_words = {}
+        # this word-compared-key dict stores the (word, j) tuples of the close_words dict ordered by j for every
+        # compared word
         self.ng_finding_time = {}
         # word-compared-key dict that stores the times needed for finding the words in the vocabulary with a greater
         # jaccard value for each word compared
 
         for w in self.words_to_compare:
             start = timer()
-            self.close_words[w] = word.NGramIndex(w, self.words_list, j_val).close_words
+            ng_data = word.NGramIndex(w, self.words_list, j_val)
+            self.close_words[w] = ng_data.close_words
             end = timer()
             self.ng_finding_time[w] = end - start
+            self.ordered_j_words[w] = ng_data.inorder_j_words(self.close_words[w])
 
         self.ed_time = {}       # word-compared-key dict that stores the times needed for finding the closest words with edit-distance
         self.ed_data = {}       # word-compared-key dict that stores the edit-distance data for every word
@@ -69,8 +74,9 @@ class Test:
                         f"utilizzando l'algoritmo di edit-distance con indici di {self.ng_dim}-gram e coefficiente di jaccard J={self.j}:\n\n" +
                         f"- tempo creazione indici di {self.ng_dim}-gram: {self.ng_creation_time}\n" +
                         f"- tempo ricerca parole vicine: {self.ng_finding_time[w]}\n" +
-                        f"- parole trovate con J>{self.j}: {self.close_words[w]}\n" +
-                        f"- tempo algoritmo edit-distance: {self.ed_time[w]}\n" + f"- parole piu' vicine trovate:\n")
+                        f"- parole trovate con J>{self.j}: {self.ordered_j_words[w]}\n" +
+                        f"- tempo algoritmo edit-distance: {self.ed_time[w]}\n" +
+                        f"- parole piu' vicine trovate con edit-distance = "f"{self.ed_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_data[w].closest_words:
                     f.write(f"{self.ed_data[w].closest_words[sw][0]}\t" +
                         f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "

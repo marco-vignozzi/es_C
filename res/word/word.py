@@ -23,13 +23,31 @@ def find_close_words(cmp_word, words_list, j):
 class NGramIndex:
     def __init__(self, word_to_cmp, words_list, j_val=0.5):
 
-        self.close_words = []           # this word-key dict associate the word and the jaccard value to the word-key
+        self.close_words = {}           # this word-key dict associate the word and the jaccard value to the word-key
+        self.ordered_j_words = []       # list of tuple (word, j) ordered by j
         self.words_list = words_list
         self.close_words = find_close_words(word_to_cmp, words_list, j_val)
+        # self.ordered_j_words = self.inorder_j_words(self.close_words)
 
+    def inorder_j_words(self, close_words):
+        tmp_dict = {}
+        for w in close_words:
+            tmp_dict[w] = close_words[w]
+        ordered_list = []
+        while tmp_dict:
+            best_j = 0
+            best_w = ""
+            for w in tmp_dict:
+                if tmp_dict[w][1] > best_j:
+                    best_w = tmp_dict[w][0]
+                    best_j = tmp_dict[w][1]
+            ordered_list.append(tmp_dict[best_w])
+            del tmp_dict[best_w]
+        return ordered_list
 
-    # def inorder_j_words(self, wj_dict):
-    #     close_words_list = []
+    # def inorder_j_words(self, close_words):
+    #     close_words_list =
+
     #     while wj_dict:
     #         best_j = 0
     #         best_w = ""
@@ -63,17 +81,16 @@ class Word:
 
 
 def main():
-    # w_list = [Word("mugolo"), Word("pigna"), Word("pigno"), Word("pigneto"), Word("paracetamolo")]
-    # ng_idx = NGramIndex(Word("mugolo"), w_list, 0.5)
-    # print(ng_idx.close_words)
+    w_list = [Word("pign"), Word("pigna"), Word("pigno"), Word("pigneto"), Word("paracetamolo")]
+    ng_idx = NGramIndex(Word("pigne"), w_list, 0.5)
+    print(ng_idx.close_words)
+    ordered_words = ng_idx.inorder_j_words(ng_idx.close_words)
+    print(ordered_words)
     # print(Word("pigne").n_grams)
     # print(Word("pigna").n_grams)
     # print(Word("pigno").n_grams)
     # print(Word("pigneto").n_grams)
     # print(Word("paracetamolo").n_grams)
-
-    w = Word("mugolo")
-    print(jaccard(w, w))
 
 
 if __name__ == "__main__":

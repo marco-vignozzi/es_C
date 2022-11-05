@@ -20,11 +20,15 @@ class EditDistanceData:
         # any element in the ed_schedule dict contains a tuple with the following data about edit-distance:
         # {word: (word, edit-cost, op-table, word-length)}
 
-        cost = math.inf
+        self.cost = math.inf        # it stores the best cost at the end of the for loop
+        self.tmp_words = []
         self.closest_words = {}    # dict word-key that associates info from the ed-schedule about the most near word(s)
         for w in words_list:         # search the closest word
-            if self.costs_list[w] <= cost:
-                cost = self.costs_list[w]
+            if self.costs_list[w] <= self.cost:
+                self.cost = self.costs_list[w]
+                self.tmp_words.append(w)
+        for w in self.tmp_words:
+            if self.costs_list[w] == self.cost:
                 self.closest_words[w] = self.ed_schedule[w]     # stores data of the closest word
         self.closest_op_seq = {}       # stores the operations to convert the closest word to the query word
         if self.closest_words:
@@ -85,7 +89,7 @@ class EditDistanceData:
         if ("copy" in op_table[m, n]) or ("replace" in op_table[m, n]):
             i = m-1
             j = n-1
-        elif "twiddle" in op_table[m, n]:
+        elif "swap" in op_table[m, n]:
             i = m-2
             j = n-2
         elif "delete" in op_table[m, n]:

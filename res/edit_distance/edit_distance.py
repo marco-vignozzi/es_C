@@ -100,23 +100,6 @@ class EditDistanceData:
     def create_op_list(self, op_list, operation):
         op_list.append(operation)
 
-    # def op_scheduler(self, schedule):
-    #     op_schedule = []
-    #     for w in schedule:
-    #         op_list = []
-    #         self.get_op_sequence(op_list, schedule[w][1], self.rows, schedule[w][2])
-    #         op_schedule.append(tuple(op_list))
-    #     return op_schedule
-    #
-    # def get_close_words(self, w_list, v):
-    #     close_words = {}
-    #     for w in w_list:
-    #         if self.costs_list[w.word] <= v:
-    #             close_words[w.word] = self.costs_list[w.word]
-    #     return close_words
-
-
-
 
 def main():
     # word = "OOTO OOTO of the OOTO"

@@ -5,7 +5,7 @@ from res.word import word
 
 class EditDistanceData:
 
-    def __init__(self, query_word, words_list):
+    def __init__(self, query_word, words_list):     # words_list must be a list of strings!
 
         self.rows = len(query_word.word)
         self.compared_word = query_word     # word to compare with all the others
@@ -14,20 +14,23 @@ class EditDistanceData:
         self.words_length = {}          # word-compared-key dict with the length of the word compared
 
         for w in words_list:
-            self.ed_schedule[w.word] = self.get_ed_schedule(query_word.word, w.word)
-            self.costs_list[w.word] = self.ed_schedule[w.word][1]
-            self.words_length[w.word] = self.ed_schedule[w.word][3]
+            self.ed_schedule[w] = self.get_ed_schedule(query_word.word, w)
+            self.costs_list[w] = self.ed_schedule[w][1]
+            self.words_length[w] = self.ed_schedule[w][3]
         # any element in the ed_schedule dict contains a tuple with the following data about edit-distance:
         # {word: (word, edit-cost, op-table, word-length)}
 
         cost = math.inf
-        self.closest_word = ()
-        for w in self.costs_list:         # search the closest word
-            if self.costs_list[w] < cost:
+        self.closest_words = {}    # dict word-key that associates info from the ed-schedule about the most near word(s)
+        for w in words_list:         # search the closest word
+            if self.costs_list[w] <= cost:
                 cost = self.costs_list[w]
-                self.closest_word = ed_schedule[w]      # stores data of the closest word
-        self.closest_op_seq = list()       # stores the operations to convert the closest word to the query word
-        self.get_op_sequence(self.closest_op_seq, self.closest_word[2], self.rows, self.closest_word[3])
+                self.closest_words[w] = self.ed_schedule[w]     # stores data of the closest word
+        self.closest_op_seq = {}       # stores the operations to convert the closest word to the query word
+        if self.closest_words:
+            for w in self.closest_words:
+                self.closest_op_seq[w] = list()
+                self.get_op_sequence(self.closest_op_seq[w], self.closest_words[w][2], self.rows, self.closest_words[w][3])
 
         # self.close_words = self.get_close_words(words_list, d_value)       # salvo le parole più vicine del valore dato (d_value)
         # cost = math.inf

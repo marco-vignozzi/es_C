@@ -11,9 +11,10 @@
 #     return jac
 #
 
-def jaccard(cmp_w, x):          # calculate the jaccard
+def jaccard(cmp_w, x):          # calculate the jaccard coefficient
     intersection = []
-    union = x.n_grams
+    union = []
+    [union.append(x.n_grams[i]) for i in range(len(x.n_grams))]
     for i in cmp_w.n_grams:
         if i in x.n_grams and i not in intersection:
             intersection.append(i)
@@ -28,7 +29,7 @@ def find_close_words(cmp_word, words_list, j):
     for w in words_list:
         jac = jaccard(cmp_word, w)
         if jac >= j:
-            j_dict[w] = (w, jac)              # if the jaccard value is greater it stores the word and the j value
+            j_dict[w.word] = (w.word, jac)    # if the jaccard value is greater it stores the word (as a string) and the j value
     return j_dict
 #
 # def find_closest(ng_close_index, ng_used, word):
@@ -110,7 +111,7 @@ class NGramIndex:
     #
 
 class Word:
-    def __init__(self, word, ng_dim=3):
+    def __init__(self, word, ng_dim=2):
         self.word = word
         self.n_grams = self.n_gram_builder(self.word, ng_dim)
 
@@ -127,10 +128,17 @@ class Word:
 
 
 def main():
-    w_list = [Word("pigna"), Word("pigno"), Word("pigneto"), Word("paracetamolo")]
-    ng_idx = NGramIndex(Word("pigne"), w_list, 0)
-    print(ng_idx.close_j_words)
+    # w_list = [Word("mugolo"), Word("pigna"), Word("pigno"), Word("pigneto"), Word("paracetamolo")]
+    # ng_idx = NGramIndex(Word("mugolo"), w_list, 0.5)
+    # print(ng_idx.close_words)
+    # print(Word("pigne").n_grams)
+    # print(Word("pigna").n_grams)
+    # print(Word("pigno").n_grams)
+    # print(Word("pigneto").n_grams)
+    # print(Word("paracetamolo").n_grams)
 
+    w = Word("mugolo")
+    print(jaccard(w, w))
 
 
 if __name__ == "__main__":

@@ -25,7 +25,7 @@ class Test:
         [self.words_list.append(word.Word(line.strip(), ng_dim)) for line in lines]
         end = timer()
 
-        self.ng_creation_time = end - start
+        self.ng_creation_time = round(end - start, 5)
 
         self.close_words = {}
         # this word-compared-key dict associates to any compared word the list of words in the vocabulary with greater
@@ -42,7 +42,7 @@ class Test:
             ng_data = word.NGramIndex(w, self.words_list, j_val)
             self.close_words[w] = ng_data.close_words
             end = timer()
-            self.ng_finding_time[w] = end - start
+            self.ng_finding_time[w] = round(end - start, 5)
             self.ordered_j_words[w] = ng_data.inorder_j_words(self.close_words[w])
 
         self.ed_time = {}       # word-compared-key dict that stores the times needed for finding the closest words with edit-distance
@@ -51,7 +51,7 @@ class Test:
             start = timer()
             self.ed_data[w] = edit_distance.EditDistanceData(w, self.close_words[w])
             end = timer()
-            self.ed_time[w] = end - start
+            self.ed_time[w] = round(end - start, 5)
 
         # start = timer()
         # self.ed_data = edit_distance.EditDistanceData(self.word_to_compare, self.words_list, ed_dist)
@@ -76,7 +76,7 @@ class Test:
                         f"- tempo ricerca parole vicine: {self.ng_finding_time[w]}\n" +
                         f"- parole trovate con J>{self.j}: {self.ordered_j_words[w]}\n" +
                         f"- tempo algoritmo edit-distance: {self.ed_time[w]}\n" +
-                        f"- parole piu' vicine trovate con edit-distance = "f"{self.ed_data[w].cost} e lista operazioni di conversione:\n")
+                        f"- trovate parole piu' vicine con edit-distance = "f"{self.ed_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_data[w].closest_words:
                     f.write(f"{self.ed_data[w].closest_words[sw][0]}\t" +
                         f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "

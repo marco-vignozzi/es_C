@@ -14,7 +14,7 @@ def jaccard(cmp_w, x):          # calculate the jaccard coefficient
 def find_close_words(cmp_word, words_list, j):
     j_dict = {}                              # word-key dict which contains any word of the list with greater jaccard
     for w in words_list:
-        jac = jaccard(cmp_word, w)
+        jac = round(jaccard(cmp_word, w), 3)
         if jac >= j:
             j_dict[w.word] = (w.word, jac)    # if the jaccard value is greater it stores the word (as a string) and the j value
     return j_dict

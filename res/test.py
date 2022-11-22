@@ -45,7 +45,7 @@ class Test:
             ng_data = word.NGramIndex(w, self.words_list, j_val)
             self.close_words[w] = ng_data.close_words
             end = timer()
-            self.ng_finding_time[w] = round(end - start, 7)
+            self.ng_finding_time[w] = round(end - start, 5)
             self.ordered_j_words[w] = ng_data.inorder_j_words(self.close_words[w])
 
         self.ed_time = {}
@@ -57,7 +57,7 @@ class Test:
             start = timer()
             self.ed_data[w] = edit_distance.EditDistanceData(w.word, self.close_words[w])
             end = timer()
-            self.ed_time[w] = round(end - start, 5)
+            self.ed_time[w] = round(end - start, 7)
 
         self.ed_only_data = {}
         # word-compared-key dict that stores data of edit-distance between the compared word with the whole words list

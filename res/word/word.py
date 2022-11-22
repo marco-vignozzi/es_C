@@ -27,7 +27,6 @@ class NGramIndex:
         self.ordered_j_words = []       # list of tuple (word, j) ordered by j
         self.words_list = words_list
         self.close_words = find_close_words(word_to_cmp, words_list, j_val)
-        # self.ordered_j_words = self.inorder_j_words(self.close_words)
 
     def inorder_j_words(self, close_words):
         tmp_dict = {}
@@ -45,23 +44,6 @@ class NGramIndex:
             del tmp_dict[best_w]
         return ordered_list
 
-    # def inorder_j_words(self, close_words):
-    #     close_words_list =
-
-    #     while wj_dict:
-    #         best_j = 0
-    #         best_w = ""
-    #         for cmp_w in wj_dict:
-    #             if wj_dict[cmp_w] > best_j:
-    #                 best_w = cmp_w
-    #                 best_j = wj_dict[cmp_w]
-    #         close_words_list.append((best_w, best_j))
-    #         if best_w:
-    #             del wj_dict[best_w]
-    #         else:
-    #             return []
-    #     return close_words_list
-    #
 
 class Word:
     def __init__(self, word, ng_dim=2):

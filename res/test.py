@@ -70,20 +70,6 @@ class Test:
             end = timer()
             self.ed_only_time[w] = round(end - start, 5)
 
-        # start = timer()
-        # self.ed_data = edit_distance.EditDistanceData(self.word_to_compare, self.words_list, ed_dist)
-        # self.ed_closest = self.ed_data.closest_word
-        # if self.ed_closest:
-        #     self.ed_op_closest = list()
-        #     self.ed_data.get_op_sequence(self.ed_op_closest, self.ed_data.ed_schedule[self.ed_closest[0]][1], len(words_to_cmp),
-        #                                  self.ed_data.ed_schedule[self.ed_closest[0]][2])
-        # end = timer()
-        # self.ed_time = end - start
-
-        # print(self.n_grams.close_j_words)
-        # print(self.edited_list.close_words_schedule)
-        # print(self.n_grams.close_words_schedule)
-
     def create_docs(self):
         with open(f"docs/{self.name}.txt", "w") as f:
             for w in self.words_to_compare:

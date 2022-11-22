@@ -36,14 +36,6 @@ class EditDistanceData:
                 self.closest_op_seq[w] = list()
                 self.get_op_sequence(self.closest_op_seq[w], self.closest_words[w][2], self.rows, self.closest_words[w][3])
 
-        # self.close_words = self.get_close_words(words_list, d_value)       # salvo le parole più vicine del valore dato (d_value)
-        # cost = math.inf
-        # self.closest_word = ()
-        # for w in self.close_words:         # trovo la parola più vicina
-        #     if self.close_words[w] < cost:
-        #         cost = self.close_words[w]
-        #         self.closest_word = w, cost
-
     def get_ed_schedule(self, x_str, y_str):
         x_str = " " + x_str
         y_str = " " + y_str

@@ -15,11 +15,11 @@ class Test:
             lines = f.readlines()
             f.close()
 
-        self.ng_creation_time = 0           # time spent to create the n-gram index for all the words
+        self.ng_creation_time = 0           # time spent to enumerate the n-grams for all the words
         self.words_list = []                # vocabulary used for comparison
         self.words_to_compare = []          # list of words to compare
 
-        # creating n-gram index for all the words
+        # enumerating n-grams for all the words
         start = timer()
         [self.words_to_compare.append(word.Word(words_to_cmp[x].strip(), ng_dim)) for x in range(0, len(words_to_cmp))]
         [self.words_list.append(word.Word(line.strip(), ng_dim)) for line in lines]
@@ -45,16 +45,21 @@ class Test:
             self.ng_finding_time[w] = round(end - start, 5)
             self.ordered_j_words[w] = ng_data.inorder_j_words(self.close_words[w])
 
-        self.ed_time = {}       # word-compared-key dict that stores the times needed for finding the closest words with edit-distance
-        self.ed_data = {}       # word-compared-key dict that stores the edit-distance data for every word
+        self.ed_time = {}
+        # word-compared-key dict that stores the times needed for finding the closest words with edit-distance
+        self.ed_data = {}
+        # word-compared-key dict that stores the edit-distance data for every word
+
         for w in self.words_to_compare:
             start = timer()
             self.ed_data[w] = edit_distance.EditDistanceData(w, self.close_words[w])
             end = timer()
             self.ed_time[w] = round(end - start, 5)
 
-        self.ed_only_data = {}  # word-compared-key dict that stores of edit-distance between the compared word with the whole words list
-        self.ed_only_time = {}  # word-compared-key dict that stores the times needed for finding the closest word with edit-distance only
+        self.ed_only_data = {}
+        # word-compared-key dict that stores data of edit-distance between the compared word with the whole words list
+        self.ed_only_time = {}
+        # word-compared-key dict that stores the times needed for finding the closest word with edit-distance only
 
         for w in self.words_to_compare:
             start = timer()
@@ -91,7 +96,7 @@ class Test:
                         f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "
                         f"\t\t\t{self.ed_data[w].closest_op_seq[sw]}\n")
                 f.write(f"\n- tempo utilizzando solo edit-distance: {self.ed_only_time[w]}" +
-                        f"\n- trocate parole piu' vicine con edit-distance = {self.ed_only_data[w].cost} e lista operazioni di conversione:\n")
+                        f"\n- trovate parole piu' vicine con edit-distance = {self.ed_only_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_only_data[w].closest_words:
                     f.write(f"{self.ed_only_data[w].closest_words[sw][0]}\t" +
                         f"- operazioni per conversione '{w.word} -> {self.ed_only_data[w].closest_words[sw][0]}':\n "

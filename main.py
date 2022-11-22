@@ -1,7 +1,7 @@
 from res import test
 
-words_to_compare = ['metitapo', 'panin', 'carucola', 'paveta', 'peresso', 'falstidio', 'perola', 'cosato', 'fra', 'polemta', 'ferilo']
-compared_dict = "60000_parole_italiane"
+words_to_compare = ['metitapo', 'panin', 'carucola', 'pro', 'falstidio', 'supercalifragilisti', 'p']
+compared_dict = "1000_parole_italiane_comuni"
 
 with open(f"res/words_lists/{compared_dict}.txt", encoding="utf8") as f:
     lines = f.readlines()

@@ -5,16 +5,16 @@ from res.word import word
 
 class EditDistanceData:
 
-    def __init__(self, query_word, words_list):     # words_list must be a list of strings!
+    def __init__(self, query_word, words_list):     # words_list and query_word must be a list of strings!
 
-        self.rows = len(query_word.word)
+        self.rows = len(query_word)
         self.compared_word = query_word     # word to compare with all the others
         self.ed_schedule = {}           # word-compared-key dict with all the info about the edit-distance
         self.costs_list = {}            # word-compared-key dict with the cost of the edit-distance
         self.words_length = {}          # word-compared-key dict with the length of the word compared
 
         for w in words_list:
-            self.ed_schedule[w] = self.get_ed_schedule(query_word.word, w)
+            self.ed_schedule[w] = self.get_ed_schedule(query_word, w)
             self.costs_list[w] = self.ed_schedule[w][1]
             self.words_length[w] = self.ed_schedule[w][3]
         # any element in the ed_schedule dict contains a tuple with the following data about edit-distance:

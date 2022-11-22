@@ -16,8 +16,11 @@ class Test:
             f.close()
 
         self.ng_creation_time = 0           # time spent to enumerate the n-grams for all the words
-        self.words_list = []                # vocabulary used for comparison
+        self.words_list = []                # vocabulary used for comparison, it stores Words
         self.words_to_compare = []          # list of words to compare
+        self.ed_words_list = []             # vocabulary used for edit distance only, it stores Strings
+
+        [self.ed_words_list.append(line.strip()) for line in lines]
 
         # enumerating n-grams for all the words
         start = timer()
@@ -42,7 +45,7 @@ class Test:
             ng_data = word.NGramIndex(w, self.words_list, j_val)
             self.close_words[w] = ng_data.close_words
             end = timer()
-            self.ng_finding_time[w] = round(end - start, 5)
+            self.ng_finding_time[w] = round(end - start, 7)
             self.ordered_j_words[w] = ng_data.inorder_j_words(self.close_words[w])
 
         self.ed_time = {}
@@ -52,7 +55,7 @@ class Test:
 
         for w in self.words_to_compare:
             start = timer()
-            self.ed_data[w] = edit_distance.EditDistanceData(w, self.close_words[w])
+            self.ed_data[w] = edit_distance.EditDistanceData(w.word, self.close_words[w])
             end = timer()
             self.ed_time[w] = round(end - start, 5)
 
@@ -63,7 +66,7 @@ class Test:
 
         for w in self.words_to_compare:
             start = timer()
-            self.ed_only_data[w] = edit_distance.EditDistanceData(w, self.words_list)
+            self.ed_only_data[w] = edit_distance.EditDistanceData(w.word, self.ed_words_list)
             end = timer()
             self.ed_only_time[w] = round(end - start, 5)
 
@@ -88,18 +91,20 @@ class Test:
                         f"utilizzando l'algoritmo di edit-distance con indici di {self.ng_dim}-grams e coefficiente di jaccard J={self.j}:\n\n" +
                         f"- tempo creazione indici di {self.ng_dim}-grams: {self.ng_creation_time}\n" +
                         f"- tempo ricerca parole vicine: {self.ng_finding_time[w]}\n" +
-                        f"- parole trovate con J>{self.j}: {self.ordered_j_words[w]}\n" +
                         f"- tempo algoritmo edit-distance + {self.ng_dim}-grams: {self.ed_time[w]}\n" +
+                        f"- tempo totale utilizzo edit-distance + {self.ng_dim}-grams con J={self.j}: " +
+                        f"{round(self.ng_creation_time + self.ng_finding_time[w] + self.ed_time[w], 5)}\n" +
+                        f"- trovate parole con J>{self.j}: {self.ordered_j_words[w]}\n" +
                         f"- trovate parole piu' vicine con edit-distance = {self.ed_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_data[w].closest_words:
                     f.write(f"{self.ed_data[w].closest_words[sw][0]}\t" +
-                        f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "
-                        f"\t\t\t{self.ed_data[w].closest_op_seq[sw]}\n")
+                            f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "
+                            f"\t\t\t{self.ed_data[w].closest_op_seq[sw]}\n")
                 f.write(f"\n- tempo utilizzando solo edit-distance: {self.ed_only_time[w]}" +
                         f"\n- trovate parole piu' vicine con edit-distance = {self.ed_only_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_only_data[w].closest_words:
                     f.write(f"{self.ed_only_data[w].closest_words[sw][0]}\t" +
-                        f"- operazioni per conversione '{w.word} -> {self.ed_only_data[w].closest_words[sw][0]}':\n "
-                        f"\t\t\t{self.ed_only_data[w].closest_op_seq[sw]}\n")
+                            f"- operazioni per conversione '{w.word} -> {self.ed_only_data[w].closest_words[sw][0]}':\n "
+                            f"\t\t\t{self.ed_only_data[w].closest_op_seq[sw]}\n")
                 f.write("\n\n\n")
-            f.close()
+        f.close()

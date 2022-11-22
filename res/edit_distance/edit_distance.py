@@ -21,9 +21,9 @@ class EditDistanceData:
         # {word: (word, edit-cost, op-table, word-length)}
 
         self.cost = math.inf        # it stores the best cost at the end of the for loop
-        self.tmp_words = []
+        self.tmp_words = []         # it temporarily stores the closest words in a list until the next check
         self.closest_words = {}    # dict word-key that associates info from the ed-schedule about the most near word(s)
-        for w in words_list:         # search the closest word
+        for w in words_list:         # search the closest word(s)
             if self.costs_list[w] <= self.cost:
                 self.cost = self.costs_list[w]
                 self.tmp_words.append(w)
@@ -43,8 +43,6 @@ class EditDistanceData:
         #     if self.close_words[w] < cost:
         #         cost = self.close_words[w]
         #         self.closest_word = w, cost
-
-
 
     def get_ed_schedule(self, x_str, y_str):
         x_str = " " + x_str

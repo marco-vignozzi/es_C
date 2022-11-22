@@ -53,6 +53,15 @@ class Test:
             end = timer()
             self.ed_time[w] = round(end - start, 5)
 
+        self.ed_only_data = {}  # word-compared-key dict that stores of edit-distance between the compared word with the whole words list
+        self.ed_only_time = {}  # word-compared-key dict that stores the times needed for finding the closest word with edit-distance only
+
+        for w in self.words_to_compare:
+            start = timer()
+            self.ed_only_data[w] = edit_distance.EditDistanceData(w, self.words_list)
+            end = timer()
+            self.ed_only_time[w] = round(end - start, 5)
+
         # start = timer()
         # self.ed_data = edit_distance.EditDistanceData(self.word_to_compare, self.words_list, ed_dist)
         # self.ed_closest = self.ed_data.closest_word
@@ -71,15 +80,21 @@ class Test:
         with open(f"docs/{self.name}.txt", "w") as f:
             for w in self.words_to_compare:
                 f.write(f"Test per trovare la parola piu' vicina a '{w.word}' nella lista '{self.compared_dict}' "
-                        f"utilizzando l'algoritmo di edit-distance con indici di {self.ng_dim}-gram e coefficiente di jaccard J={self.j}:\n\n" +
-                        f"- tempo creazione indici di {self.ng_dim}-gram: {self.ng_creation_time}\n" +
+                        f"utilizzando l'algoritmo di edit-distance con indici di {self.ng_dim}-grams e coefficiente di jaccard J={self.j}:\n\n" +
+                        f"- tempo creazione indici di {self.ng_dim}-grams: {self.ng_creation_time}\n" +
                         f"- tempo ricerca parole vicine: {self.ng_finding_time[w]}\n" +
                         f"- parole trovate con J>{self.j}: {self.ordered_j_words[w]}\n" +
-                        f"- tempo algoritmo edit-distance: {self.ed_time[w]}\n" +
-                        f"- trovate parole piu' vicine con edit-distance = "f"{self.ed_data[w].cost} e lista operazioni di conversione:\n")
+                        f"- tempo algoritmo edit-distance + {self.ng_dim}-grams: {self.ed_time[w]}\n" +
+                        f"- trovate parole piu' vicine con edit-distance = {self.ed_data[w].cost} e lista operazioni di conversione:\n")
                 for sw in self.ed_data[w].closest_words:
                     f.write(f"{self.ed_data[w].closest_words[sw][0]}\t" +
                         f"- operazioni per conversione '{w.word} -> {self.ed_data[w].closest_words[sw][0]}':\n "
                         f"\t\t\t{self.ed_data[w].closest_op_seq[sw]}\n")
+                f.write(f"\n- tempo utilizzando solo edit-distance: {self.ed_only_time[w]}" +
+                        f"\n- trocate parole piu' vicine con edit-distance = {self.ed_only_data[w].cost} e lista operazioni di conversione:\n")
+                for sw in self.ed_only_data[w].closest_words:
+                    f.write(f"{self.ed_only_data[w].closest_words[sw][0]}\t" +
+                        f"- operazioni per conversione '{w.word} -> {self.ed_only_data[w].closest_words[sw][0]}':\n "
+                        f"\t\t\t{self.ed_only_data[w].closest_op_seq[sw]}\n")
                 f.write("\n\n\n")
             f.close()
